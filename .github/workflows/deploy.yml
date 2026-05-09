@@ -1,24 +1,31 @@
-name: Deploy to Self-Hosted Runner
+name: Deploy to Coolify (Self-Hosted Runner)
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - main
 
 jobs:
   deploy:
     runs-on: self-hosted
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      # 1. Checkout source code
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Build Docker image
-      run: docker build -t khunpk .
+      # 2. Optional: show commit info (debug)
+      - name: Show commit
+        run: |
+          echo "Deploying commit: $GITHUB_SHA"
+          echo "Branch: $GITHUB_REF_NAME"
 
-    - name: Stop and remove existing container
-      run: |
-        docker stop khunpk-app || true
-        docker rm khunpk-app || true
+      # 3. Trigger Coolify deployment
+      - name: Trigger Coolify Deploy
+        run: |
+          curl -X GET \
+            "http://${{ vars.IP_ADDRESS }}:8000/api/v1/deploy?uuid=${{ secrets.COOLIFY_UUID }}&force=false"
 
-    - name: Run new container
-      run: docker run -d --name khunpk-app -p 8080:8080 khunpk
+      # 4. Optional: wait a bit for deployment to start
+      - name: Wait for deployment
+        run: sleep 5
