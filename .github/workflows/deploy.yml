@@ -1,0 +1,24 @@
+name: Deploy to Self-Hosted Runner
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Build Docker image
+      run: docker build -t khunpk .
+
+    - name: Stop and remove existing container
+      run: |
+        docker stop khunpk-app || true
+        docker rm khunpk-app || true
+
+    - name: Run new container
+      run: docker run -d --name khunpk-app -p 8080:8080 khunpk
