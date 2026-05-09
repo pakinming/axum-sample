@@ -30,8 +30,8 @@ jobs:
       # 4. Optional: wait a bit for deployment to start
       - name: Wait for deployment
         run: sleep 5
-      
+
       # 5. Health Check
       - name: Health Check
         run: |
-          curl -f http://${{ vars.IP_ADDRESS }}:3000 || exit 1
+          curl -f http://${{ vars.AXUM_SAMPLE_HOST }} || exit 1
