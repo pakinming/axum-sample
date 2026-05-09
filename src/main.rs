@@ -28,6 +28,7 @@ async fn main() {
 }
 
 async fn handler() -> Html<&'static str> {
+    log::info!("request handler");
     Html("<h1>Hello, World!</h1>")
 }
 
